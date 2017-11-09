@@ -1,0 +1,19 @@
+#Tem que ser informado desde o início do path. 
+#path:src/main/webapp/temp
+
+#glob:<nome do objeto a ser ignorado> -> significa syntax: glob
+glob:nb-configuration.xml  #Arquivo de configuração do Netbeans
+glob:nbproject             #Pasta de configuração do Netbeans
+glob:.settings             #Pasta de configuração do Eclipse
+glob:.project              #Pasta de configuração do Eclipse
+glob:.classpath            #Pasta de configuração do Eclipse
+glob:target                #Pasta temporária de projeto Java
+glob:nbactions.xml
+glob:*.orig                #Arquivo de backup feito pelo Mercurial
+glob:*.war                 #Arquivo de deploy de projeto Java
+glob:*.swp                 #Arquivo de sistema(lock) do editor vi
+
+#re:<nome do objeto a ser ignorado> -> significa syntax: regexp
+re:\$\{jboss.deploy\}  #Pasta de arquivos war de projetos Java
+
+

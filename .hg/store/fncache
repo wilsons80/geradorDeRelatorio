@@ -1,0 +1,14 @@
+data/src/main/java/br/com/wcs80/relatorio/util/TipoPath.java.i
+data/src/main/java/br/jus/trt10/relatorio/util/TipoPath.java.i
+data/src/main/java/br/jus/trt10/relatorio/util/FileUtil.java.i
+data/src/main/java/br/com/wcs80/relatorio/util/FileUtil.java.i
+data/src/main/java/META-INF/persistence.xml.i
+data/pom.xml.i
+data/src/main/java/br/com/wcs80/relatorio/util/TipoRelatorio.java.i
+data/.hgignore.i
+data/META-INF/persistence.xml.i
+data/src/main/java/br/com/wcs80/relatorio/fabrica/FabricaRelatorio.java.i
+data/src/main/java/br/jus/trt10/relatorio/util/TipoExporter.java.i
+data/documentacao/leia-me.txt.i
+data/src/main/java/br/jus/trt10/relatorio/util/TipoRelatorio.java.i
+data/src/main/java/br/jus/trt10/relatorio/fabrica/FabricaRelatorio.java.i

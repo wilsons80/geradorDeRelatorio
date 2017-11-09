@@ -1,0 +1,134 @@
+====================================================================================================================
+Caminho do repositório Mercurial do projeto GeradorDeRelatorio 
+
+	https://disis.hg.trt10.jus.br/GeradorDeRelatorio/
+
+====================================================================================================================
+Regras para criar o relatório .jrxml
+
+	1 - O NOME e o TIPO dos Fields do relatório devem ser iguais aos definidos no bean da aplicação.
+
+	Exemplo:
+		Bean Exemplo.java
+			private String nomeMagistrado;
+
+		Exemplo.jrxml
+		       <field name="nomeMagistrado" class="java.lang.String"/>
+
+====================================================================================================================
+Estrutura obrigatória do arquivo .zip contendo os relatórios .jrxml
+
+├── Relatorio.zip
+    ├── brasao.jpg
+    └── index.jrxml
+
+Obs: - O arquivo index.jrxml deve ser o relatório principal
+     - Os demais relatórios (sub-relatórios) devem permanecer com o mesmo nome, ou seja, conforme criados.
+     - Todas as imagens devem estar no arquivo .zip junto com os relatórios .jrxml
+
+
+====================================================================================================================
+Exemplo de uso do Gerador de Relatório
+
+1 - No arquivo Exemplo.xhtml
+	<p:commandButton action="#{exemploBean.gerarRelatorio()}" 
+                 id="btnImprimir"
+                     value="Imprimir"
+                     title="Gerar relatório em PDF"
+                     icon="imagemPDF">
+	</p:commandButton>
+
+
+2 - No arquivo ExemploBean.java
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Métodos responsáveis pela geração de relatórios
+	////////////////////////////////////////////////////////////////////////////////////////////////////////	
+	
+	public void gerarRelatorio(){
+		gerarRelatorio(TipoRelatorio.PDF, "Relatorio.zip", listaTabelaEntidade);
+	}
+
+	private void gerarRelatorio(TipoRelatorio tipoRelatorio,String nomeRelatorioZip, List<Entidade> listaRelatorio) {
+		try {
+			String pathZip = "/WEB-INF/relatorios/" + nomeRelatorioZip;
+			
+			FabricaRelatorio fabricaRelatorio = new FabricaRelatorio(pathZip,TipoPath.RELATIVO);
+			
+			/////////////////////////////////////////////////////////////////////////////////
+			//Mapeia os parâmetros do relatório...
+			Map<String, Object> parametros = new LinkedHashMap<String, Object>();
+			parametros.put("P_PERIODO", mapaSelecionada.getMesMapa() + "/" + mapaSelecionada.getAnoMapa());
+			/////////////////////////////////////////////////////////////////////////////////
+
+			byte[] arqResultado = fabricaRelatorio.executarRelatorio(parametros,listaRelatorio, tipoRelatorio);
+
+			setObjetoSessao("docConcat", arqResultado);
+			ServletVisualizaPDF.gerarRelatorioServlet(FileUtil.getNameSemExtensao(nomeRelatorioZip).concat(tipoRelatorio.getExtensao()));
+
+		} catch (NullPointerException e) {
+			popupMensagemErro("Não foi possível encontrar o arquivo JASPER (" + nomeRelatorioZip + ") responsável por gerar o relatório!");
+		} catch (Exception e) {
+			popupMensagemErro("Não foi possível gerar o relatório!"+ e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+====================================================================================================================
+Para relatórios que contém dependencia de entidades criadas na aplicação:
+
+1-Passo: Criar o jar com todas as entidades
+	
+	cd << entrar na pasta onde está o arquivo pom.xml do projeto >>
+	mvn compile
+	cd target/classes/
+	jar cvf <<caminho onde será salvo o arquivo .jar>> <<informar os arquivos .class que serão exportados>>
+		ex: jar cvf /home/ebenezer.botelho/tmp/teste.jar br/jus/trt10/saude10/entity/* 
+ 
+ 
+2-Passo: Adicionar o arquivo .jar no build path do projeto no JasperSoftStudio
+    - Clicar com botão direito no projeto
+    - Selecionar a opção "Properties"
+    - Selecionar a opção "Java Build Path"
+    - Selecionar a aba "Libraries"
+    - Clicar no botão "Add External JARs"
+    - Selecionar o arquivo .jar criado no "1-Passo"
+    - Clicar no botão "OK" para finalizar 
+
+
+3-Passo - Forma de uso
+
+	- No relatório .jrxml do JasperStudio ao criar um novo Field é necessário informar a Class com o objeto desejado. 
+	- Para fazer referência a um método do atributo da lista de beans é necessário informar através do método get
+		- Ex: $F{mapa}.getAnoMapa()
+
+
+====================================================================================================================
+Relatórios com sub-relatórios
+
+1- No componente Subreport deve-se especificar na propriedade "Data Source Expression" o seguinte valor:
+   new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource( $F{listaMapaAcumulacaoDia} )
+   
+   1.1 - $F{listaMapaAcumulacaoDia} representa o nome da propriedade da lista definida no bean do relatório principal.
+
+
+====================================================================================================================
+
+Possíveis erros gerados pelo JasperSoft Studio
+
+-------------
+Erro: 01
+
+	Ao arrastar um "Fields" em que a Class representa uma entidade do seu projeto para dentro da band Detail, 
+	o JasperSoft pode lançar o seguinte erro:
+	
+	   java.lang.ClassNotFoundException: <<caminho_do_pacote.nomeDaEntidade>>
+	   
+Solução:
+	
+	Acessar o código XML do relatório e acrescentar na parte <detail> a tag <textField> na mão.
+	    
+-------------	   
+
+
+====================================================================================================================
