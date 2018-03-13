@@ -106,12 +106,23 @@ Para relatórios que contém dependencia de entidades criadas na aplicação:
 ====================================================================================================================
 Relatórios com sub-relatórios
 
-1- No componente Subreport deve-se especificar na propriedade "Data Source Expression" o seguinte valor:
-   new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource( $F{listaMapaAcumulacaoDia} )
+1- No relatório principal
+   1.0 - Criar o Field com o nome do atributo que representa a Lista
+       - Name:  <<nome do atributo>>
+       - Class:  java.util.List
    
-   1.1 - $F{listaMapaAcumulacaoDia} representa o nome da propriedade da lista definida no bean do relatório principal.
-
-
+   
+   1.1 - Incluir o componente subreport
+		1.1- No componente Subreport deve-se especificar na propriedade "Data Source Expression" o seguinte valor:
+		   new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource( $F{listaMapaAcumulacaoDia} )
+		   
+		   1.1.1 - $F{listaMapaAcumulacaoDia} representa o nome da propriedade da lista definida no bean do relatório principal.
+	
+	
+	   	2.1- Na propriedade "Expression" do componente subreport acrescentar:
+	   	   $P{SUBREPORT_DIR} + "pendencias_prepostos.jasper"
+	   	      - onde "pendencias_prepostos.jasper" significa o nome do sub-relatorio
+   	      
 ====================================================================================================================
 
 Possíveis erros gerados pelo JasperSoft Studio
